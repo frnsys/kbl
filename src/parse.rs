@@ -70,12 +70,20 @@ pub fn parse_keymap<P: AsRef<Path>>(path: P) -> KeyMap {
         keymap
             .combos
             .extend(config.combos.into_iter().map(|(inps, output)| {
-                let inputs: Vec<_> = inps
-                    .into_iter()
-                    .map(|ch| keys.get(&ch).unwrap().clone())
-                    .collect();
-                Combo { inputs, output }
-            }));
+            let inputs: Vec<_> = inps
+                .into_iter()
+                .map(|ch| {
+                    if !keys.contains_key(&ch) {
+                        eprintln!(
+                            "Layer {name}: Expected {:?} for a combo, but it isn't in the layer.",
+                            ch
+                        );
+                    }
+                    keys.get(&ch).unwrap().clone()
+                })
+                .collect();
+            Combo { inputs, output }
+        }));
         keymap
             .shifts
             .extend(config.shifts.into_iter().map(|(input, output)| {
