@@ -27,9 +27,15 @@ struct LayerConfig {
 
 pub fn parse_keymap<P: AsRef<Path>>(path: P) -> KeyMap {
     let keymap = fs_err::read_to_string(path).expect("Unable to read file");
+    let (keymap, include) = keymap
+        .split_once("\n===\n")
+        .unwrap_or_else(|| (keymap.as_str(), ""));
     let layers = keymap.split("\n---\n");
 
-    let mut keymap = KeyMap::default();
+    let mut keymap = KeyMap {
+        include: include.to_string(),
+        ..Default::default()
+    };
 
     for layer in layers {
         // Expect three parts delimited by two line breaks:
@@ -70,7 +76,7 @@ pub fn parse_keymap<P: AsRef<Path>>(path: P) -> KeyMap {
         keymap
             .combos
             .extend(config.combos.into_iter().map(|(inps, output)| {
-            let inputs: Vec<_> = inps
+                let inputs: Vec<_> = inps
                 .into_iter()
                 .map(|ch| {
                     if !keys.contains_key(&ch) {
@@ -82,8 +88,8 @@ pub fn parse_keymap<P: AsRef<Path>>(path: P) -> KeyMap {
                     keys.get(&ch).unwrap().clone()
                 })
                 .collect();
-            Combo { inputs, output }
-        }));
+                Combo { inputs, output }
+            }));
         keymap
             .shifts
             .extend(config.shifts.into_iter().map(|(input, output)| {

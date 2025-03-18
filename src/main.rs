@@ -18,9 +18,12 @@ impl FormatInto<C> for &KeyDef {
 
 impl KeyMap {
     fn to_c(&self) -> String {
+        let include = &self.include;
         let tokens: Tokens<C> = quote! {
             #include QMK_KEYBOARD_H
             #define LAYOUT LAYOUT_split_3x5_2
+
+            $include
 
             enum layers {
                 $(for layer_name in self.layers.iter().map(|(name, _)| name) join(,) => $layer_name)

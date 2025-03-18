@@ -114,6 +114,9 @@ which can then be compiled:
 kbl layout.kbl > /path/to/my/qmk/keymaps/keymap.c
 ```
 
+To include literal C into the generated file you can add a final section starting with `===` and include the C code after it.
+
+
 ## Notes
 
 - The visual layout definition relies on each key being defined by a single character. As such many keys are mapped to special characters, e.g. "␣" for "space". Refer to `keys.rs` to see these mappings.
