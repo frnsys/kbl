@@ -60,7 +60,7 @@ pub fn parse_keymap<P: AsRef<Path>>(path: P) -> KeyMap {
             let tap = if let Some(def) = config.defs.get(&ch) {
                 def.clone()
             } else {
-                TapKey::Key(Key::try_from(ch).unwrap())
+                TapKey::try_from(ch).unwrap()
             };
 
             // Include a hold action, if one's specified.
@@ -93,7 +93,10 @@ pub fn parse_keymap<P: AsRef<Path>>(path: P) -> KeyMap {
         keymap
             .shifts
             .extend(config.shifts.into_iter().map(|(input, output)| {
-                let input = keys.get(&input).unwrap().clone();
+                let input = keys
+                    .get(&input)
+                    .cloned()
+                    .unwrap_or_else(|| KeyDef::Tap(TapKey::try_from(input).unwrap()));
                 Shifted { input, output }
             }));
         keymap.layers.push((name.to_string(), layer_def));
@@ -169,6 +172,14 @@ impl TryFrom<char> for Key {
     type Error = serde_yaml::Error;
     fn try_from(ch: char) -> Result<Self, Self::Error> {
         (ch.to_string().as_str()).try_into()
+    }
+}
+
+impl TryFrom<char> for TapKey {
+    type Error = serde_yaml::Error;
+
+    fn try_from(ch: char) -> Result<Self, Self::Error> {
+        Key::try_from(ch).map(TapKey::Key)
     }
 }
 
