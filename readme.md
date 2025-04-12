@@ -38,7 +38,7 @@ combos:
   [S, T]: B
   [A, E]: K
   [M, L]: J
-  [F, U]: X
+  [F, U]: [X, Layer(SYSTEM)]
 shifts:
   ",": "-"
   ".": _
@@ -114,11 +114,23 @@ which can then be compiled:
 kbl layout.kbl > /path/to/my/qmk/keymaps/keymap.c
 ```
 
-To include literal C into the generated file you can add a final section starting with `===` and include the C code after it.
+To include literal C into the generated file you can add a final section starting with `===` and include the C code after it, e.g.:
+
+```
+===
+
+// Disable Liatris power LED
+#include "gpio.h"
+void keyboard_pre_init_user(void) {
+    gpio_set_pin_output(24);
+    gpio_write_pin_high(24);
+}
+```
 
 
 ## Notes
 
 - The visual layout definition relies on each key being defined by a single character. As such many keys are mapped to special characters, e.g. "␣" for "space". Refer to `keys.rs` to see these mappings.
+  - Note that `⬚` is used to indicate an unassigned key.
 - This only supports a small portion of QMK features; i.e. the ones that I use. So far this includes tap-hold, shift key overrides, and combos.
 - The layer config is parsed as YAML, so the usual YAML caveats apply. In particular there are some characters which will need to be quoted, such as `:`, `-`, and `"`; basically any characters that are special for YAML.
