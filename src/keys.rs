@@ -96,6 +96,8 @@ define_keys! {
     "↓" => Down => "KC_DOWN",
     "←" => Left => "KC_LEFT",
     "→" => Right => "KC_RIGHT",
+    "⇞" => PageUp => "KC_PGUP",
+    "⇟" => PageDown => "KC_PGDN",
 
     "⏶" => VolumeUp => "KC_VOLU",
     "⏷" => VolumeDown => "KC_VOLD",
