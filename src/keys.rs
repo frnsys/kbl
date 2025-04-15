@@ -120,6 +120,8 @@ define_keys! {
     "⎈" => Ctrl => "KC_LCTL",
     "⎇" => Alt => "KC_LALT",
 
+    "⇫" => CapsWord => "QK_CAPS_WORD_TOGGLE",
+
     "∅" => NotAllowed => "KC_NO",
     "⬚" => Unassigned => "KC_NO",
 }
@@ -151,6 +153,7 @@ impl std::fmt::Display for Modifier {
 pub enum TapKey {
     Key(Key),
     Layer(String),
+    OneShot(Modifier),
     Modified(Vec<Modifier>, Key),
 }
 impl std::fmt::Display for TapKey {
@@ -161,6 +164,9 @@ impl std::fmt::Display for TapKey {
             match self {
                 Self::Key(key) => key.to_string(),
                 Self::Layer(layer) => format!("MO({layer})"),
+                Self::OneShot(modifier) => {
+                    format!("OSM(MOD_{modifier})")
+                }
                 Self::Modified(modifiers, key) => {
                     let mut s = String::new();
                     let mut depth = 0;

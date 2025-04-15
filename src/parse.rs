@@ -120,6 +120,12 @@ impl<'de> serde::Deserialize<'de> for TapKey {
             return Ok(TapKey::Layer(layer.to_string()));
         }
 
+        if let Some(modifier) = s.strip_prefix("OneShot(").and_then(|s| s.strip_suffix(")")) {
+            if let Ok(modifier) = serde_yaml::from_str(modifier) {
+                return Ok(TapKey::OneShot(modifier));
+            }
+        }
+
         let (mods, key) = parse_nested(s);
         let mods = mods
             .into_iter()
