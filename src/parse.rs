@@ -116,13 +116,19 @@ impl<'de> serde::Deserialize<'de> for TapKey {
             return Ok(TapKey::Key(key));
         }
 
-        if let Some(layer) = s.strip_prefix("Layer(").and_then(|s| s.strip_suffix(")")) {
+        if let Some(layer) = s.strip_prefix("Enable(").and_then(|s| s.strip_suffix(")")) {
             return Ok(TapKey::Layer(layer.to_string()));
         }
 
-        if let Some(modifier) = s.strip_prefix("OneShot(").and_then(|s| s.strip_suffix(")")) {
-            if let Ok(modifier) = serde_yaml::from_str(modifier) {
-                return Ok(TapKey::OneShot(modifier));
+        if let Some(layer) = s.strip_prefix("Toggle(").and_then(|s| s.strip_suffix(")")) {
+            return Ok(TapKey::ToggleLayer(layer.to_string()));
+        }
+
+        if let Some(s) = s.strip_prefix("OneShot(").and_then(|s| s.strip_suffix(")")) {
+            if let Ok(modifier) = serde_yaml::from_str(s) {
+                return Ok(TapKey::OneShotMod(modifier));
+            } else {
+                return Ok(TapKey::OneShotLayer(s.to_string()));
             }
         }
 

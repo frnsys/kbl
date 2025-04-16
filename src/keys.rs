@@ -125,7 +125,7 @@ define_keys! {
     "⇫" => CapsWord => "QK_CAPS_WORD_TOGGLE",
 
     "∅" => NotAllowed => "KC_NO",
-    "⬚" => Unassigned => "KC_NO",
+    "⬚" => Unassigned => "KC_TRNS",
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Deserialize)]
@@ -155,7 +155,9 @@ impl std::fmt::Display for Modifier {
 pub enum TapKey {
     Key(Key),
     Layer(String),
-    OneShot(Modifier),
+    ToggleLayer(String),
+    OneShotMod(Modifier),
+    OneShotLayer(String),
     Modified(Vec<Modifier>, Key),
 }
 impl std::fmt::Display for TapKey {
@@ -166,8 +168,12 @@ impl std::fmt::Display for TapKey {
             match self {
                 Self::Key(key) => key.to_string(),
                 Self::Layer(layer) => format!("MO({layer})"),
-                Self::OneShot(modifier) => {
+                Self::ToggleLayer(layer) => format!("TG({layer})"),
+                Self::OneShotMod(modifier) => {
                     format!("OSM(MOD_{modifier})")
+                }
+                Self::OneShotLayer(layer) => {
+                    format!("OSL({layer})")
                 }
                 Self::Modified(modifiers, key) => {
                     let mut s = String::new();
