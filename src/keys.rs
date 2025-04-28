@@ -122,6 +122,9 @@ define_keys! {
     "⎈" => Ctrl => "KC_LCTL",
     "⎇" => Alt => "KC_LALT",
 
+    "⤊" => MouseWheelUp => "QK_MOUSE_WHEEL_UP",
+    "⤋" => MouseWheelDown => "QK_MOUSE_WHEEL_DOWN",
+
     "⇫" => CapsWord => "QK_CAPS_WORD_TOGGLE",
 
     "∅" => NotAllowed => "KC_NO",
