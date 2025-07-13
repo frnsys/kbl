@@ -1,7 +1,7 @@
 use std::{collections::HashMap, path::Path};
 
 use crate::{
-    keymap::{Combo, KeyMap, Shifted},
+    keymap::{Combo, KeyMap, Layer, LayerKey, Shifted},
     keys::*,
 };
 
@@ -73,23 +73,30 @@ pub fn parse_keymap<P: AsRef<Path>>(path: P) -> KeyMap {
             layer_def.push(key);
         }
 
-        keymap
+        let combos = config
             .combos
-            .extend(config.combos.into_iter().map(|(inps, output)| {
+            .into_iter()
+            .map(|(inps, output)| {
                 let inputs: Vec<_> = inps
                 .into_iter()
                 .map(|ch| {
-                    if !keys.contains_key(&ch) {
-                        eprintln!(
+                    if let Some(key) = keys.get(&ch) {
+                        let position = layer_def.iter().position(|k| k == key).unwrap();
+                        LayerKey {
+                            key: key.clone(),
+                            position,
+                        }
+                    } else {
+                        panic!(
                             "Layer {name}: Expected {:?} for a combo, but it isn't in the layer.",
                             ch
                         );
                     }
-                    keys.get(&ch).unwrap().clone()
                 })
                 .collect();
                 Combo { inputs, output }
-            }));
+            })
+            .collect();
         keymap
             .shifts
             .extend(config.shifts.into_iter().map(|(input, output)| {
@@ -99,7 +106,11 @@ pub fn parse_keymap<P: AsRef<Path>>(path: P) -> KeyMap {
                     .unwrap_or_else(|| KeyDef::Tap(TapKey::try_from(input).unwrap()));
                 Shifted { input, output }
             }));
-        keymap.layers.push((name.to_string(), layer_def));
+        keymap.layers.push(Layer {
+            name: name.to_string(),
+            layout: layer_def,
+            combos,
+        });
     }
     keymap
 }

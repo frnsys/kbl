@@ -1,6 +1,6 @@
 # kbl
 
-Allows QMK keymaps to be written in (what I find to be) a nicer way, compiling to the standard `keymap.c`.
+Allows QMK and ZMK keymaps to be written in (what I find to be) a nicer way, compiling to the standard `keymap.c` for QMK and `*.keymap` for ZMK.
 
 The idea is that keymaps are defined visually, and additional configuration such as combos are grouped with their layers.
 
@@ -111,10 +111,11 @@ shifts:
 which can then be compiled:
 
 ```bash
-kbl layout.kbl > /path/to/my/qmk/keymaps/keymap.c
+kbl qmk layout.kbl > /path/to/my/qmk/keymaps/keymap.c
+kbl zmk layout.kbl > /path/to/my/zmk/config/something.keymap
 ```
 
-To include literal C into the generated file you can add a final section starting with `===` and include the C code after it, e.g.:
+To include literal code into the generated file you can add a final section starting with `===` and include the code after it, e.g. for QMK:
 
 ```
 ===
@@ -128,9 +129,9 @@ void keyboard_pre_init_user(void) {
 ```
 
 
-## Notes
+## Notes & Limitations
 
 - The visual layout definition relies on each key being defined by a single character. As such many keys are mapped to special characters, e.g. "␣" for "space". Refer to `keys.rs` to see these mappings.
   - Note that `⬚` is used to indicate an unassigned key.
-- This only supports a small portion of QMK features; i.e. the ones that I use. So far this includes tap-hold, shift key overrides, and combos.
-- The layer config is parsed as YAML, so the usual YAML caveats apply. In particular there are some characters which will need to be quoted, such as `:`, `-`, and `"`; basically any characters that are special for YAML.
+- This only supports a small portion of QMK and ZMK features; i.e. the ones that I use, which also happen to only be features shared between both. So far this includes tap-hold, shift key overrides, and combos.
+- The layer config is parsed as YAML, so the usual YAML caveats apply. In particular there are some characters which will need to be quoted, such as `:`, `-`, and `"`; basically any characters that are special for YAML. Numbers may also need to be quoted so they're parsed as strings.
