@@ -4,8 +4,8 @@ version = "1.0.0"
 edition = "2024"
 
 [dependencies]
-fs-err = "3.0.0"
+fs-err = "3.1.1"
 genco = "0.17.10"
 serde_yaml = "0.9.34"
-serde = { version = "1.0.217", features = ["derive"] }
-bpaf = { version = "0.9.15", features = ["derive"] }
+serde = { version = "1.0.219", features = ["derive"] }
+bpaf = { version = "0.9.20", features = ["derive"] }
