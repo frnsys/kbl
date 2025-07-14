@@ -34,11 +34,12 @@ impl Format for ZMK {
 
                 combos {
                     compatible = "zmk,combos";
-                    $(for ComboDef { name, positions, output } in combos(&keymap.layers) join($['\r']) =>
+                    $(for ComboDef { name, positions, output, layer } in combos(&keymap.layers) join($['\r']) =>
                         $name {
                             timeout-ms = <200>;
                             key-positions = <$positions>;
                             bindings = <$(kd(output))>;
+                            layers = <$layer>;
                         };
                     )
                 };
@@ -66,6 +67,7 @@ struct ComboDef<'a> {
     name: String,
     positions: String,
     output: &'a KeyDef,
+    layer: &'a str,
 }
 
 fn combos<'a>(layers: &'a [Layer]) -> impl Iterator<Item = ComboDef<'a>> {
@@ -75,6 +77,7 @@ fn combos<'a>(layers: &'a [Layer]) -> impl Iterator<Item = ComboDef<'a>> {
             .iter()
             .enumerate()
             .map(move |(j, combo)| ComboDef {
+                layer: &layer.name,
                 name: format!("combo_{i}_{j}"),
                 output: &combo.output,
                 positions: combo
@@ -275,4 +278,3 @@ fn kd(keydef: &KeyDef) -> String {
         KeyDef::TapHold(tap, hold) => hk(hold, tap),
     }
 }
-
