@@ -16,12 +16,68 @@ impl KeyMap {
     pub fn combos(&self) -> impl Iterator<Item = &Combo> {
         self.layers.iter().flat_map(|layer| layer.combos.iter())
     }
+
+    pub fn validate(&self) -> Vec<String> {
+        let mut errors: Vec<String> = vec![];
+        let layers: Vec<_> = self.layers.iter().map(|layer| &layer.name).collect();
+
+        for key in self.keys() {
+            match key {
+                KeyDef::Tap(tap_key) => match tap_key {
+                    TapKey::Layer(layer)
+                    | TapKey::ToggleLayer(layer)
+                    | TapKey::OneShotLayer(layer) => {
+                        if !layers.contains(&layer) {
+                            errors.push(format!("Missing layer: {layer}"));
+                        }
+                    }
+                    _ => {}
+                },
+                KeyDef::TapHold(tap_key, hold_key) => {
+                    match tap_key {
+                        TapKey::Layer(layer)
+                        | TapKey::ToggleLayer(layer)
+                        | TapKey::OneShotLayer(layer) => {
+                            if !layers.contains(&layer) {
+                                errors.push(format!("Missing layer: {layer}"));
+                            }
+                        }
+                        _ => {}
+                    }
+                    match hold_key {
+                        HoldKey::Layer(layer) => {
+                            if !layers.contains(&layer) {
+                                errors.push(format!("Missing layer: {layer}"));
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
+        errors
+    }
+
+    /// Iterator over all keys defined in this keymap.
+    fn keys(&self) -> impl Iterator<Item = &KeyDef> {
+        self.layers
+            .iter()
+            .flat_map(|layer| layer.keys())
+            .chain(self.shifts.iter().map(|shifted| &shifted.output))
+    }
 }
 
 pub struct Layer {
     pub name: String,
     pub layout: Layout,
     pub combos: Vec<Combo>,
+}
+impl Layer {
+    pub fn keys(&self) -> impl Iterator<Item = &KeyDef> {
+        self.layout
+            .iter()
+            .chain(self.combos.iter().map(|combo| &combo.output))
+    }
 }
 
 pub type Layout = Vec<KeyDef>;

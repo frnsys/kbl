@@ -48,9 +48,16 @@ struct Args {
     path: PathBuf,
 }
 
-fn main() {
+fn main() -> Result<(), Vec<String>> {
     let opts = args().run();
     let keymap = KeyMap::load(&opts.path);
-    let output = opts.target.format(&keymap);
-    println!("{output}");
+
+    let errors = keymap.validate();
+    if errors.is_empty() {
+        let output = opts.target.format(&keymap);
+        println!("{output}");
+        Ok(())
+    } else {
+        Err(errors)
+    }
 }
