@@ -47,13 +47,10 @@ impl KeyMap {
                         }
                         _ => {}
                     }
-                    match hold_key {
-                        HoldKey::Layer(layer) => {
-                            if !layers.contains(&layer) {
-                                errors.push(format!("Missing layer: {layer}"));
-                            }
-                        }
-                        _ => {}
+                    if let HoldKey::Layer(layer) = hold_key
+                        && !layers.contains(&layer)
+                    {
+                        errors.push(format!("Missing layer: {layer}"));
                     }
                 }
             }

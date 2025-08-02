@@ -7,6 +7,7 @@ use crate::{
 
 use super::Format;
 
+#[allow(clippy::upper_case_acronyms)]
 pub struct ZMK;
 
 impl Format for ZMK {
@@ -252,7 +253,7 @@ fn tk(key: &TapKey) -> String {
                 s.push_str(&format!("{modifier}("));
                 depth += 1;
             }
-            s.push_str(kc(&key));
+            s.push_str(kc(key));
             for _ in 0..depth {
                 s.push(')');
             }

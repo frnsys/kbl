@@ -12,16 +12,16 @@ use format::*;
 
 #[derive(Debug, Clone, Bpaf)]
 enum Target {
-    QMK,
-    ZMK,
+    Qmk,
+    Zmk,
 }
 impl FromStr for Target {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "qmk" => Ok(Self::QMK),
-            "zmk" => Ok(Self::ZMK),
+            "qmk" => Ok(Self::Qmk),
+            "zmk" => Ok(Self::Zmk),
             _ => Err(format!("Invalid target: {s}")),
         }
     }
@@ -29,8 +29,8 @@ impl FromStr for Target {
 impl Target {
     fn format(&self, keymap: &KeyMap) -> String {
         match self {
-            Target::QMK => QMK::format(keymap),
-            Target::ZMK => ZMK::format(keymap),
+            Target::Qmk => QMK::format(keymap),
+            Target::Zmk => ZMK::format(keymap),
         }
     }
 }

@@ -29,7 +29,7 @@ pub fn parse_keymap<P: AsRef<Path>>(path: P) -> KeyMap {
     let keymap = fs_err::read_to_string(path).expect("Unable to read file");
     let (keymap, include) = keymap
         .split_once("\n===\n")
-        .unwrap_or_else(|| (keymap.as_str(), ""));
+        .unwrap_or((keymap.as_str(), ""));
     let layers = keymap.split("\n---\n");
 
     let mut keymap = KeyMap {
