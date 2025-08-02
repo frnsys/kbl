@@ -97,19 +97,28 @@ pub fn parse_keymap<P: AsRef<Path>>(path: P) -> KeyMap {
                 Combo { inputs, output }
             })
             .collect();
-        keymap
+        let shifts: Vec<_> = config
             .shifts
-            .extend(config.shifts.into_iter().map(|(input, output)| {
+            .into_iter()
+            .enumerate()
+            .map(|(i, (input, output))| {
                 let input = keys
                     .get(&input)
                     .cloned()
                     .unwrap_or_else(|| KeyDef::Tap(TapKey::try_from(input).unwrap()));
-                Shifted { input, output }
-            }));
+                let name = format!("shift_{name}_{i}");
+                Shifted {
+                    name,
+                    input,
+                    output,
+                }
+            })
+            .collect();
         keymap.layers.push(Layer {
             name: name.to_string(),
             layout: layer_def,
             combos,
+            shifts,
         });
     }
     keymap

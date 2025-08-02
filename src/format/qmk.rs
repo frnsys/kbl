@@ -42,11 +42,11 @@ impl Format for QMK {
             };
 
             // Shift overrides
-            $(for (i, Shifted { input, output }) in keymap.shifts.iter().enumerate() join($['\r']) {
-                const key_override_t shift_$i = ko_make_basic(MOD_MASK_SHIFT, $(kd(input)), $(kd(output)));
+            $(for Shifted { name, input, output } in keymap.shifts() join($['\r']) {
+                const key_override_t $name = ko_make_basic(MOD_MASK_SHIFT, $(kd(input)), $(kd(output)));
             })
             const key_override_t *key_overrides[] = {
-                $(for (i, _) in keymap.shifts.iter().enumerate() join(,$['\r']) => &shift_$i)
+                $(for (i, _) in keymap.shifts().enumerate() join(,$['\r']) => &shift_$i)
             };
         };
         tokens.to_file_string().unwrap()
@@ -221,4 +221,3 @@ fn kd(keydef: &KeyDef) -> String {
         KeyDef::TapHold(tap, hold) => hk(hold, tap),
     }
 }
-

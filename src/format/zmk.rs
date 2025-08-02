@@ -11,6 +11,7 @@ pub struct ZMK;
 
 impl Format for ZMK {
     fn format(keymap: &KeyMap) -> String {
+        let include = &keymap.include;
         let tokens: Tokens<C> = quote! {
             #include <behaviors.dtsi>
             #include <dt-bindings/zmk/keys.h>
@@ -22,8 +23,10 @@ impl Format for ZMK {
 
             / {
                 behaviors {
-                    $(for (i, Shifted { input, output }) in keymap.shifts.iter().enumerate() join($['\r']) {
-                        shift_$i: shift_$i {
+                    $include
+
+                    $(for Shifted { name, input, output } in keymap.shifts() join($['\r']) {
+                        $name: $name {
                             compatible = "zmk,behavior-mod-morph";
                             #binding-cells = <0>;
                             bindings = <$(kd(input))>, <$(kd(output))>;
@@ -47,11 +50,11 @@ impl Format for ZMK {
                 keymap {
                     compatible = "zmk,keymap";
 
-                    $(for Layer { name, layout, .. } in &keymap.layers join($['\r']) =>
+                    $(for Layer { name, layout, shifts, .. } in &keymap.layers join($['\r']) =>
                         $name {
                             bindings = <
                                 $(for key in layout join(  ) =>
-                                    $(kd(key))
+                                    $(skd(key, shifts))
                                 )
                             >;
                         };
@@ -276,5 +279,14 @@ fn kd(keydef: &KeyDef) -> String {
     match keydef {
         KeyDef::Tap(key) => tk(key),
         KeyDef::TapHold(tap, hold) => hk(hold, tap),
+    }
+}
+
+/// A key that may have a shift override.
+fn skd(key: &KeyDef, shifts: &[Shifted]) -> String {
+    if let Some(Shifted { name, .. }) = shifts.iter().find(|s| &s.input == key) {
+        format!("&{name}")
+    } else {
+        kd(key)
     }
 }

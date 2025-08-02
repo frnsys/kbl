@@ -5,7 +5,6 @@ use crate::{keys::*, parse};
 #[derive(Default)]
 pub struct KeyMap {
     pub layers: Vec<Layer>,
-    pub shifts: Vec<Shifted>,
     pub include: String,
 }
 impl KeyMap {
@@ -15,6 +14,10 @@ impl KeyMap {
 
     pub fn combos(&self) -> impl Iterator<Item = &Combo> {
         self.layers.iter().flat_map(|layer| layer.combos.iter())
+    }
+
+    pub fn shifts(&self) -> impl Iterator<Item = &Shifted> {
+        self.layers.iter().flat_map(|layer| layer.shifts.iter())
     }
 
     pub fn validate(&self) -> Vec<String> {
@@ -60,10 +63,11 @@ impl KeyMap {
 
     /// Iterator over all keys defined in this keymap.
     fn keys(&self) -> impl Iterator<Item = &KeyDef> {
-        self.layers
-            .iter()
-            .flat_map(|layer| layer.keys())
-            .chain(self.shifts.iter().map(|shifted| &shifted.output))
+        self.layers.iter().flat_map(|layer| {
+            layer
+                .keys()
+                .chain(layer.shifts.iter().map(|shifted| &shifted.output))
+        })
     }
 }
 
@@ -71,6 +75,7 @@ pub struct Layer {
     pub name: String,
     pub layout: Layout,
     pub combos: Vec<Combo>,
+    pub shifts: Vec<Shifted>,
 }
 impl Layer {
     pub fn keys(&self) -> impl Iterator<Item = &KeyDef> {
@@ -97,6 +102,7 @@ pub struct Combo {
 
 /// An override for a `Shift+Key` behavior.
 pub struct Shifted {
+    pub name: String,
     pub input: KeyDef,
     pub output: KeyDef,
 }
