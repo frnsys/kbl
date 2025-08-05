@@ -38,11 +38,11 @@ impl Format for ZMK {
 
                 combos {
                     compatible = "zmk,combos";
-                    $(for ComboDef { name, positions, output, layer } in combos(&keymap.layers) join($['\r']) =>
+                    $(for ComboDef { name, positions, output, layer, shifts } in combos(&keymap.layers) join($['\r']) =>
                         $name {
-                            timeout-ms = <200>;
+                            timeout-ms = <25>;
                             key-positions = <$positions>;
-                            bindings = <$(kd(output))>;
+                            bindings = <$(skd(output, shifts))>;
                             layers = <$layer>;
                         };
                     )
@@ -72,6 +72,7 @@ struct ComboDef<'a> {
     positions: String,
     output: &'a KeyDef,
     layer: &'a str,
+    shifts: &'a [Shifted],
 }
 
 fn combos<'a>(layers: &'a [Layer]) -> impl Iterator<Item = ComboDef<'a>> {
@@ -84,6 +85,7 @@ fn combos<'a>(layers: &'a [Layer]) -> impl Iterator<Item = ComboDef<'a>> {
                 layer: &layer.name,
                 name: format!("combo_{i}_{j}"),
                 output: &combo.output,
+                shifts: &layer.shifts,
                 positions: combo
                     .inputs
                     .iter()
@@ -265,7 +267,7 @@ fn tk(key: &TapKey) -> String {
 fn hk(hold: &HoldKey, tap: &TapKey) -> String {
     let key = match tap {
         TapKey::Key(key) => kc(key),
-        _ => panic!("The tap key in a hold-tap definition must be a regular key."),
+        _ => panic!("The tap key in a hold-tap definition must be a regular key: {tap:?}"),
     };
     match hold {
         HoldKey::Layer(layer) => format!("&lt {layer} {key}"),

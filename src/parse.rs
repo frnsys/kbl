@@ -48,7 +48,14 @@ pub fn parse_keymap<P: AsRef<Path>>(path: P) -> KeyMap {
         let layout = parts[1];
         let mut config: LayerConfig = parts
             .get(2)
-            .map(|config| serde_yaml::from_str(config).unwrap())
+            .map(|config| {
+                serde_yaml::from_str(config)
+                    .inspect_err(|err| {
+                        eprintln!("Err: {err:?}");
+                        eprintln!("{config}");
+                    })
+                    .unwrap()
+            })
             .unwrap_or_default();
 
         // Figure out mapping of chars to the key definitions.
