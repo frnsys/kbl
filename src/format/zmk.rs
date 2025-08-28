@@ -40,7 +40,7 @@ impl Format for ZMK {
                     compatible = "zmk,combos";
                     $(for ComboDef { name, positions, output, layer, shifts } in combos(&keymap.layers) join($['\r']) =>
                         $name {
-                            timeout-ms = <25>;
+                            timeout-ms = <40>;
                             key-positions = <$positions>;
                             bindings = <$(skd(output, shifts))>;
                             layers = <$layer>;
