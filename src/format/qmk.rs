@@ -47,7 +47,7 @@ impl Format for QMK {
                 const key_override_t $name = ko_make_basic(MOD_MASK_SHIFT, $(kd(input)), $(kd(output)));
             })
             const key_override_t *key_overrides[] = {
-                $(for (i, _) in keymap.shifts().enumerate() join(,$['\r']) => &shift_$i)
+                $(for Shifted { name, .. } in keymap.shifts() join(,$['\r']) => &$name)
             };
         };
         tokens.to_file_string().unwrap()
