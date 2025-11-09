@@ -117,6 +117,9 @@ define_keys! {
 
     "⇫" => CapsWord,
 
+    "◐" => Bt0,
+    "◑" => Bt1,
+
     "∅" => NotAllowed,
     "⬚" => Unassigned,
 }

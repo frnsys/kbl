@@ -164,6 +164,9 @@ fn kc(key: &Key) -> &'static str {
 
         Key::NotAllowed => "KC_NO",
         Key::Unassigned => "KC_TRNS",
+
+        // No appropriate keycode.
+        Key::Bt0 | Key::Bt1 => "KC_NO",
     }
 }
 

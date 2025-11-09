@@ -199,6 +199,10 @@ fn kc(key: &Key) -> &'static str {
         Key::Ctrl => "LCTRL",
         Key::Alt => "LALT",
 
+        // Bluetooth profiles
+        Key::Bt0 => "BT_SEL 0",
+        Key::Bt1 => "BT_SEL 1",
+
         // No appropriate keycode.
         // NOTE: This may indicate that the intermediate
         // representation should not treat these as normal keys?
@@ -236,6 +240,7 @@ fn tk(key: &TapKey) -> String {
         TapKey::Key(key) => match key {
             Key::CapsWord => "&caps_word".to_string(),
             Key::Unassigned | Key::NotAllowed => "&none".to_string(),
+            Key::Bt0 | Key::Bt1 => format!("&bt {}", kc(key)),
             _ => format!("&kp {}", kc(key)),
         },
         TapKey::Layer(layer) => format!("&mo {layer}"),
