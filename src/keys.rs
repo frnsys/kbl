@@ -119,6 +119,7 @@ define_keys! {
 
     "◐" => Bt0,
     "◑" => Bt1,
+    "◌" => BtClear,
 
     "∅" => NotAllowed,
     "⬚" => Unassigned,

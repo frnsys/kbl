@@ -166,7 +166,7 @@ fn kc(key: &Key) -> &'static str {
         Key::Unassigned => "KC_TRNS",
 
         // No appropriate keycode.
-        Key::Bt0 | Key::Bt1 => "KC_NO",
+        Key::Bt0 | Key::Bt1 | Key::BtClear => "KC_NO",
     }
 }
 
