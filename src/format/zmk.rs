@@ -12,6 +12,10 @@ pub struct ZMK;
 
 impl Format for ZMK {
     fn format(keymap: &KeyMap) -> String {
+        let combo_timeout = std::env::var("ZMK_COMBO_TIMEOUT")
+            .map(|v| v.parse::<u16>().unwrap())
+            .unwrap_or(45);
+
         let include = &keymap.include;
         let tokens: Tokens<C> = quote! {
             #include <behaviors.dtsi>
@@ -40,7 +44,7 @@ impl Format for ZMK {
                     compatible = "zmk,combos";
                     $(for ComboDef { name, positions, output, layer, shifts } in combos(&keymap.layers) join($['\r']) =>
                         $name {
-                            timeout-ms = <45>;
+                            timeout-ms = <$combo_timeout>;
                             key-positions = <$positions>;
                             bindings = <$(skd(output, shifts))>;
                             layers = <$layer>;
