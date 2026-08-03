@@ -217,6 +217,7 @@ fn kc(key: &Key) -> &'static str {
         Key::MouseWheelUp => "none",
         Key::MouseWheelDown => "none",
         Key::CapsWord => "none",
+        Key::Bootloader => "none",
         Key::NotAllowed => "none",
         Key::Unassigned => "none",
     }
@@ -244,7 +245,9 @@ fn tk(key: &TapKey) -> String {
     match key {
         TapKey::Key(key) => match key {
             Key::CapsWord => "&caps_word".to_string(),
-            Key::Unassigned | Key::NotAllowed => "&none".to_string(),
+            Key::Bootloader => "&bootloader".to_string(),
+            Key::Unassigned => "&trans".to_string(),
+            Key::NotAllowed => "&none".to_string(),
             Key::Bt0 | Key::Bt1 | Key::BtClear => format!("&bt {}", kc(key)),
             _ => format!("&kp {}", kc(key)),
         },

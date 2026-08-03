@@ -162,6 +162,8 @@ fn kc(key: &Key) -> &'static str {
 
         Key::CapsWord => "QK_CAPS_WORD_TOGGLE",
 
+        Key::Bootloader => "QK_BOOT",
+
         Key::NotAllowed => "KC_NO",
         Key::Unassigned => "KC_TRNS",
 

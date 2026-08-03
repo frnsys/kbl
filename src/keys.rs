@@ -121,6 +121,8 @@ define_keys! {
     "◑" => Bt1,
     "◌" => BtClear,
 
+    "↺" => Bootloader,
+
     "∅" => NotAllowed,
     "⬚" => Unassigned,
 }
